@@ -1,11 +1,32 @@
 #include "MainComponent.h"
 
-//==============================================================================
-MainComponent::MainComponent()
+
+
+
+template<class ButtonType>
+auto makeButton(ButtonType* buttonToMakeUnique) -> std::unique_ptr<ButtonType>
 {
-    addAndMakeVisible(togglebutton);
-    setSize (600, 400);
+    return std::unique_ptr<ButtonType>(buttonToMakeUnique);
 }
+
+
+
+//==============================================================================
+MainComponent::MainComponent() 
+{
+  
+
+//    std::make_unique<juce::TextButton>(nullptr);
+//    ButtonWrapper<juce::DrawableButton>()
+    
+    heapButton.reset(new HeapButtonWrapper<juce::TextButton>([](){DBG("You clicked the heap");},                                                                                                    new juce::TextButton("heapButton"))
+                    );
+    addAndMakeVisible(button);
+    
+    addAndMakeVisible( (*heapButton) );
+    setSize(600, 400);
+}
+
 
 MainComponent::~MainComponent()
 {
@@ -27,5 +48,13 @@ void MainComponent::resized()
     // This is called when the MainComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-    togglebutton.setBounds(10, 10, 30, 30);
+    button->setBounds(498,
+                      0,
+                      100, 30);
+    (*heapButton)->setBounds(498,
+                             368,
+                             100, 30);
 }
+
+
+
